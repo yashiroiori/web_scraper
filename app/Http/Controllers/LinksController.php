@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Category;
+use App\ItemSchema;
 use App\Link;
 use App\Website;
 use Illuminate\Http\Request;
@@ -18,7 +19,9 @@ class LinksController extends Controller
     {
         $links = Link::orderBy('id', 'DESC')->paginate(10);
 
-        return view('dashboard.link.index')->withLinks($links);
+        $itemSchemas = ItemSchema::all();
+
+        return view('dashboard.link.index')->withLinks($links)->withItemSchemas($itemSchemas);
     }
 
     /**
@@ -44,6 +47,7 @@ class LinksController extends Controller
     {
         $this->validate($request, [
             'url' => 'required',
+            'main_filter_selector' => 'required',
             'website_id' => 'required',
             'category_id' => 'required'
         ]);
@@ -51,6 +55,8 @@ class LinksController extends Controller
         $link = new Link;
 
         $link->url = $request->input('url');
+
+        $link->main_filter_selector = $request->input('main_filter_selector');
 
         $link->website_id = $request->input('website_id');
 
@@ -97,6 +103,7 @@ class LinksController extends Controller
     {
         $this->validate($request, [
             'url' => 'required',
+            'main_filter_selector' => 'required',
             'website_id' => 'required',
             'category_id' => 'required'
         ]);
@@ -104,6 +111,8 @@ class LinksController extends Controller
         $link = Link::find($id);
 
         $link->url = $request->input('url');
+
+        $link->main_filter_selector = $request->input('main_filter_selector');
 
         $link->website_id = $request->input('website_id');
 

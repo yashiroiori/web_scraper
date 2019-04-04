@@ -39,6 +39,7 @@
                                     <li><a href="{{ url('dashboard/websites') }}">Websites</a></li>
                                     <li><a href="{{ url('dashboard/categories') }}">Categories</a></li>
                                     <li><a href="{{ url('dashboard/links') }}">Links</a></li>
+                                    <li><a href="{{ url('dashboard/item-schema') }}">Item Schema</a></li>
                                     <li role="separator" class="divider"></li>
                                     <li><a href="{{ url('dashboard/articles') }}">Articles</a></li>
                                 </ul>
@@ -53,5 +54,7 @@
             </div>
         </div>
     </div>
+
+    @yield('script')
 </body>
 </html>

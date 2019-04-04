@@ -4,7 +4,7 @@
 
     <div class="row">
         <div class="col-md-12">
-            <h2>Add Link</h2>
+            <h2>Add Item Schema</h2>
 
             @if(session('error')!='')
                 <div class="alert alert-danger">
@@ -30,15 +30,16 @@
 
             @endif
 
-            <form method="post" action="{{ route('links.store') }}" enctype="multipart/form-data">
+            <form method="post" action="{{ route('item-schema.store') }}" enctype="multipart/form-data">
                 {{ csrf_field() }}
+
                 <div class="row">
                     <div class="col-xs-12 col-sm-12 col-md-6">
                         <div class="form-group">
 
-                            <strong>Url:</strong>
+                            <strong>Title:</strong>
 
-                            <input type="text" name="url" class="form-control" />
+                            <input type="text" name="title" class="form-control" />
                         </div>
                     </div>
                 </div>
@@ -47,9 +48,9 @@
                     <div class="col-xs-12 col-sm-12 col-md-6">
                         <div class="form-group">
 
-                            <strong>Main Filter Selector:</strong>
+                            <strong>CSS Expression:</strong>
 
-                            <input type="text" name="main_filter_selector" class="form-control" />
+                            <input type="text" name="css_expression" class="form-control" />
                         </div>
                     </div>
                 </div>
@@ -58,34 +59,9 @@
                     <div class="col-xs-12 col-sm-12 col-md-6">
                         <div class="form-group">
 
-                            <strong>Website:</strong>
+                            <strong>Is Full Url To Article/Partial Url:</strong>
 
-                            <select name="website_id" class="form-control">
-                                <option value="">select</option>
-
-                                @foreach($websites as $website)
-                                    <option value="{{ $website->id }}">{{ $website->title }}</option>
-                                @endforeach
-                            </select>
-
-                        </div>
-                    </div>
-                </div>
-
-                <div class="row">
-                    <div class="col-xs-12 col-sm-12 col-md-6">
-                        <div class="form-group">
-
-                            <strong>Category:</strong>
-
-                            <select name="category_id" class="form-control">
-                                <option value="">select</option>
-
-                                @foreach($categories as $category)
-                                    <option value="{{ $category->id }}">{{ $category->title }}</option>
-                                @endforeach
-                            </select>
-
+                            <input type="checkbox" name="is_full_url" value="1" checked />
                         </div>
                     </div>
                 </div>

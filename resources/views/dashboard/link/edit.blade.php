@@ -49,6 +49,17 @@
                     <div class="col-xs-12 col-sm-12 col-md-6">
                         <div class="form-group">
 
+                            <strong>Main Filter Selector:</strong>
+
+                            <input type="text" name="main_filter_selector" value="{{ $link->main_filter_selector }}" class="form-control" />
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-xs-12 col-sm-12 col-md-6">
+                        <div class="form-group">
+
                             <strong>Website:</strong>
 
                             <select name="website_id" class="form-control">
