@@ -17,6 +17,7 @@ Route::group(['prefix' => 'dashboard'], function() {
     Route::resource('/websites', 'WebsitesController');
     Route::resource('/categories', 'CategoriesController');
     Route::patch('/links/set-item-schema', 'LinksController@setItemSchema');
+    Route::post('/links/scrape', 'LinksController@scrape');
     Route::resource('/links', 'LinksController');
     Route::resource('/item-schema', 'ItemSchemaController');
 });

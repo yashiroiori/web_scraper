@@ -98,6 +98,28 @@
                   }
                });
            });
+           
+           $(".btn-scrape").click(function () {
+               var btn = $(this);
+
+               var tRowId = $(this).parents("tr").attr("data-id");
+
+               $.ajaxSetup({
+                   headers: {
+                       'X-XSRF-TOKEN': "{{ csrf_token() }}"
+                   }
+               });
+
+               $.ajax({
+                   url: "{{ url('dashboard/links/scrape') }}",
+                   data: {link_id: tRowId, _token: "{{ csrf_token() }}"},
+                   method: "post",
+                   dataType: "json",
+                   success: function (response) {
+                       btn.find(".fast-right-spinner").show();
+                   }
+               });
+           });
         });
     </script>
 @endsection

@@ -4,9 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Category;
 use App\ItemSchema;
+use App\Lib\Scraper;
 use App\Link;
 use App\Website;
 use Illuminate\Http\Request;
+use Goutte\Client;
 
 class LinksController extends Controller
 {
@@ -169,6 +171,9 @@ class LinksController extends Controller
             return;
         }
 
+        $scraper = new Scraper(new Client());
+
+        $scraper->handle($link);
 
     }
 }

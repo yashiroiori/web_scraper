@@ -18,8 +18,8 @@ class Link extends Model
         return $this->belongsTo('App\Website', 'website_id');
     }
 
-    public function itemSelector()
+    public function itemSchema()
     {
-        return $this->belongsTo('App\ItemSelector', 'item_selector_id');
+        return $this->belongsTo('App\ItemSchema', 'item_schema_id');
     }
 }
