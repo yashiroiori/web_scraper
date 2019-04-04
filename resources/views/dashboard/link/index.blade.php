@@ -16,11 +16,12 @@
                         <td>Main Filter Selector</td>
                         <td>Website</td>
                         <td>Assigned To Category</td>
-                        <td>Item Schema</td>
+                        <td><strong>Item Schema</strong></td>
+                        <td><strong>Scrape Link</strong></td>
                         <td>Actions</td>
                     </tr>
                     @foreach($links as $link)
-                        <tr>
+                        <tr data-id="{{ $link->id }}">
                             <td>{{ $link->url }}</td>
                             <td>{{ $link->main_filter_selector }}</td>
                             <td>{{ $link->website->title }} </td>
@@ -33,6 +34,13 @@
                                     @endforeach
                                 </select>
                                 <button type="button" class="btn btn-info btn-sm btn-apply" style="display: none">Apply</button>
+                            </td>
+                            <td>
+                                @if($link->item_schema_id != "" && $link->main_filter_selector != "")
+                                    <button type="button" class="btn btn-primary btn-scrape">Scrape <i class="glyphicon glyphicon-repeat fast-right-spinner" style="display: none"></i></button>
+                                @else
+                                    <span style="color: red">fill main filter selector and item schema first</span>
+                                @endif
                             </td>
                             <td>
                                 <a href="{{ url('dashboard/links/' . $link->id . '/edit') }}"><i class="glyphicon glyphicon-edit"></i> </a>
@@ -63,6 +71,32 @@
               if($(this).val() != $(this).attr("data-original-schema")) {
                   $(this).siblings('.btn-apply').show();
               }
+           });
+           
+           $('.btn-apply').click(function () {
+
+               var btn = $(this);
+
+               var tRowId = $(this).parents("tr").attr("data-id");
+               var schema_id = $(this).siblings('select').val();
+
+               $.ajaxSetup({
+                   headers: {
+                       'X-XSRF-TOKEN': "{{ csrf_token() }}"
+                   }
+               });
+
+               $.ajax({
+                  url: "{{ url('dashboard/links/set-item-schema') }}",
+                  data: {link_id: tRowId, item_schema_id: schema_id, _token: "{{ csrf_token() }}", _method: "patch"},
+                  method: "post",
+                  dataType: "json",
+                  success: function (response) {
+                      alert(response.msg);
+
+                      btn.hide();
+                  }
+               });
            });
         });
     </script>

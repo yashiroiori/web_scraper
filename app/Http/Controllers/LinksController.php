@@ -133,4 +133,42 @@ class LinksController extends Controller
     {
         //
     }
+
+
+    /**
+     * @param Request $request
+     */
+    public function setItemSchema(Request $request)
+    {
+        if(!$request->item_schema_id && !$request->link_id)
+            return;
+
+        $link = Link::find($request->link_id);
+
+        $link->item_schema_id = $request->item_schema_id;
+
+        $link->save();
+
+        return response()->json(['msg' => 'Link updated!']);
+    }
+
+
+    /**
+     * scrape specific link
+     *
+     * @param Request $request
+     */
+    public function scrape(Request $request)
+    {
+        if(!$request->link_id)
+            return;
+
+        $link = Link::find($request->link_id);
+
+        if(empty($link->main_filter_selector) && (empty($link->item_schema_id) || $link->item_schema_id == 0)) {
+            return;
+        }
+
+
+    }
 }
