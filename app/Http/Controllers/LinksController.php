@@ -175,5 +175,10 @@ class LinksController extends Controller
 
         $scraper->handle($link);
 
+        if($scraper->status == 1) {
+            return response()->json(['status' => 1, 'msg' => 'Scraping done']);
+        } else {
+            return response()->json(['status' => 2, 'msg' => $scraper->status]);
+        }
     }
 }

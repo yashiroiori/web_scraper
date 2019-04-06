@@ -6,6 +6,8 @@
         <div class="col-md-12">
             <h2>Links</h2>
 
+            <div class="alert alert-success" style="display: none"></div>
+
             <a href="{{ route('links.create') }}" class="btn btn-warning pull-right">Add new</a>
 
             @if(count($links) > 0)
@@ -37,7 +39,7 @@
                             </td>
                             <td>
                                 @if($link->item_schema_id != "" && $link->main_filter_selector != "")
-                                    <button type="button" class="btn btn-primary btn-scrape">Scrape <i class="glyphicon glyphicon-repeat fast-right-spinner" style="display: none"></i></button>
+                                    <button type="button" class="btn btn-primary btn-scrape" title="pull the latest items">Scrape <i class="glyphicon glyphicon-repeat fast-right-spinner" style="display: none"></i></button>
                                 @else
                                     <span style="color: red">fill main filter selector and item schema first</span>
                                 @endif
@@ -102,6 +104,10 @@
            $(".btn-scrape").click(function () {
                var btn = $(this);
 
+               btn.find(".fast-right-spinner").show();
+
+               btn.prop("disabled", true);
+
                var tRowId = $(this).parents("tr").attr("data-id");
 
                $.ajaxSetup({
@@ -116,7 +122,14 @@
                    method: "post",
                    dataType: "json",
                    success: function (response) {
-                       btn.find(".fast-right-spinner").show();
+
+                       if(response.status == 1) {
+                           $(".alert").removeClass("alert-danger").addClass("alert-success").text(response.msg).show();
+                       } else {
+                           $(".alert").removeClass("alert-success").addClass("alert-danger").text(response.msg).show();
+                       }
+
+                       btn.find(".fast-right-spinner").hide();
                    }
                });
            });

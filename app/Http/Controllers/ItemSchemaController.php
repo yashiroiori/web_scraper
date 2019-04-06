@@ -39,7 +39,8 @@ class ItemSchemaController extends Controller
     {
         $this->validate($request, [
             'title' => 'required',
-            'css_expression' => 'required'
+            'css_expression' => 'required',
+            'full_content_selector' => 'required'
         ]);
 
         $itemSchema = new ItemSchema;
@@ -54,6 +55,8 @@ class ItemSchemaController extends Controller
         }
 
         $itemSchema->css_expression = $request->input('css_expression');
+
+        $itemSchema->full_content_selector = $request->input('full_content_selector');
 
         $itemSchema->save();
 
@@ -93,7 +96,8 @@ class ItemSchemaController extends Controller
     {
         $this->validate($request, [
             'title' => 'required',
-            'css_expression' => 'required'
+            'css_expression' => 'required',
+            'full_content_selector' => 'required'
         ]);
 
         $itemSchema = ItemSchema::find($id);
@@ -108,6 +112,8 @@ class ItemSchemaController extends Controller
         }
 
         $itemSchema->css_expression = $request->input('css_expression');
+
+        $itemSchema->full_content_selector = $request->input('full_content_selector');
 
         $itemSchema->save();
 

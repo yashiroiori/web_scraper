@@ -66,6 +66,17 @@
                     </div>
                 </div>
 
+                <div class="row">
+                    <div class="col-xs-12 col-sm-12 col-md-6">
+                        <div class="form-group">
+
+                            <strong>Full content selector:</strong>
+
+                            <input type="text" name="full_content_selector" class="form-control" />
+                        </div>
+                    </div>
+                </div>
+
                 <div class="col-xs-12 col-sm-12 col-md-12 text-center">
 
                     <button type="submit" class="btn btn-primary" id="btn-save">Create</button>

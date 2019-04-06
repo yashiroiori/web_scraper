@@ -2,6 +2,7 @@
 
 namespace App\Lib;
 
+use App\Article;
 use Goutte\Client as GoutteClient;
 
 /**
@@ -21,6 +22,10 @@ class Scraper
 
     public $results = [];
 
+    public $savedItems = 0;
+
+    public $status = 1;
+
     public function __construct(GoutteClient $client)
     {
         $this->client = $client;
@@ -28,56 +33,112 @@ class Scraper
 
     public function handle($linkObj)
     {
-        $crawler = $this->client->request('GET', $linkObj->url);
+        try {
+            $crawler = $this->client->request('GET', $linkObj->url);
 
-        $translateExpre = $this->translateCSSExpression($linkObj->itemSchema->css_expression);
+            $translateExpre = $this->translateCSSExpression($linkObj->itemSchema->css_expression);
 
-        if(isset($translateExpre['title'])) {
+            if (isset($translateExpre['title'])) {
 
-            $data = [];
+                $data = [];
 
-            // filter
-            $crawler->filter($linkObj->main_filter_selector)->each(function ($node) use ($translateExpre, &$data, $linkObj) {
+                // filter
+                $crawler->filter($linkObj->main_filter_selector)->each(function ($node) use ($translateExpre, &$data, $linkObj) {
 
-                // using the $node var we can access sub elements deep the tree
+                    // using the $node var we can access sub elements deep the tree
 
-                foreach ($translateExpre as $key => $val) {
+                    foreach ($translateExpre as $key => $val) {
 
-                    if($val['is_attribute'] == false) {
-                        $data[$key][] = $node->filter($val['selector'])->text();
-                    } else {
-                        if($key == 'source_link') {
+                        if($node->filter($val['selector'])->count() > 0) {
 
-                            $item_link = $node->filter($val['selector'])->attr($val['attr']);
+                            if ($val['is_attribute'] == false) {
 
-                            // append website url in case the article is not full url
-                            if($linkObj->itemSchema->is_full_url == 0) {
-                                $item_link = $linkObj->website->url . $node->filter($val['selector'])->attr($val['attr']);
+                                $data[$key][] = preg_replace("#\n|'|\"#",'', $node->filter($val['selector'])->text());
+                            } else {
+                                if ($key == 'source_link') {
+
+                                    $item_link = $node->filter($val['selector'])->attr($val['attr']);
+
+                                    // append website url in case the article is not full url
+                                    if ($linkObj->itemSchema->is_full_url == 0) {
+                                        $item_link = $linkObj->website->url . $node->filter($val['selector'])->attr($val['attr']);
+                                    }
+
+                                    $data[$key][] = $item_link;
+                                    $data['content'][] = $this->fetchFullContent($item_link, $linkObj->itemSchema->full_content_selector);
+                                } else {
+                                    $data[$key][] = $node->filter($val['selector'])->attr($val['attr']);
+                                }
                             }
-
-                            $data[$key][] = $item_link;
-                        } else {
-                            $data[$key][] = $node->filter($val['selector'])->attr($val['attr']);
                         }
                     }
-                }
 
-                $data['category_id'][] = $linkObj->category->id;
+                    $data['category_id'][] = $linkObj->category->id;
 
-                $data['website_id'][] = $linkObj->website->id;
+                    $data['website_id'][] = $linkObj->website->id;
 
-            });
+                });
+                //dd($data);
+                $this->save($data);
 
-            $this->save($data);
-
-            $this->results = $data;
+                $this->results = $data;
+            }
+        } catch (\Exception $ex) {
+            $this->status = $ex->getMessage();
         }
     }
 
 
+    /**
+     * fetchFullContent
+     *
+     * this method pulls the full content of a single item using the
+     * item url and selector
+     *
+     * @param $item_url
+     * @param $selector
+     * @return string
+     */
+    protected function fetchFullContent($item_url, $selector)
+    {
+        try {
+            $crawler = $this->client->request('GET', $item_url);
+
+            return $crawler->filter($selector)->html();
+        } catch (\Exception $ex) {
+            return "";
+        }
+    }
+
     protected function save($data)
     {
-        dd($data);
+        foreach ($data['title'] as $k => $val) {
+
+            $checkExist = Article::where('source_link', $data['source_link'][$k])->first();
+
+            if(!isset($checkExist->id)) {
+
+                $article = new Article();
+
+                $article->title = $val;
+
+                $article->excerpt = isset($data['excerpt'][$k]) ? $data['excerpt'][$k] : "";
+
+                $article->content = isset($data['content'][$k]) ? $data['content'][$k] : "";
+
+                $article->image = isset($data['image'][$k]) ? $data['image'][$k] : "";
+
+                $article->source_link = $data['source_link'][$k];
+
+                $article->category_id = $data['category_id'][$k];
+
+                $article->website_id = $data['website_id'][$k];
+
+                $article->save();
+
+                $this->savedItems++;
+            }
+        }
     }
 
 
