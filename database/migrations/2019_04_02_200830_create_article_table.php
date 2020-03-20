@@ -15,11 +15,11 @@ class CreateArticleTable extends Migration
     {
         Schema::create('article', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('title');
-            $table->string('excerpt')->nullable();
-            $table->text('content')->nullable();
+            $table->string('title', 355);
+            $table->text('excerpt')->nullable();
+            $table->longText('content')->nullable();
             $table->string('image')->nullable();
-            $table->string('source_link')->nullable();
+            $table->string('source_link', 355)->nullable();
             $table->unsignedInteger('category_id')->nullable();
             $table->unsignedInteger('website_id')->nullable();
             $table->foreign('category_id')

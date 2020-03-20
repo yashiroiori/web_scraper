@@ -18,6 +18,7 @@ class CreateItemSchemaTable extends Migration
             $table->string('title');
             $table->boolean('is_full_url')->default(1);   // whether this is a full link to article or partial link
             $table->text('css_expression');    // expression defines the selectors structure for this item i.e (a > p) find all p tags inside a
+            $table->string('full_content_selector');
 
             $table->timestamps();
         });
